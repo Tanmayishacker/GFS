@@ -1,8 +1,7 @@
 #pragma once
-#include <string>
-#include <iostream>
+#include <commanInclude.hpp>
 
-std::string BinaryFileReader(std::string completeFilePath)
+std::string BinaryFileReader(String completeFilePath)
 {
     std::ifstream file(completeFilePath, std::ios::binary);
 
@@ -15,16 +14,16 @@ std::string BinaryFileReader(std::string completeFilePath)
     return data;
 }
 
-void writeToFile(const std::string& directory, const std::string& filename, const std::string& data)
+void writeToFile(const String& directory, const String& filename, const String& data)
 {
     // Create the directory if it doesn't exist
-    std::filesystem::create_directories(directory);
+    fs::create_directory(directory);
 
     // Define the full path for the file
     std::string fullPath = directory + "/" + filename;
 
     // Open the file in write mode
-    std::ofstream outfile;
+    std::ofstream outfile(fullPath);
 
     if (!outfile) {
         return; // Exit if file creation failed
@@ -35,4 +34,15 @@ void writeToFile(const std::string& directory, const std::string& filename, cons
 
     // Close the file
     outfile.close();
+}
+
+std::string readNormalFile(const std::string& filePath) {
+    std::ifstream file(filePath);
+    if (!file.is_open()) {
+        throw std::runtime_error("Could not open file: " + filePath);
+    }
+
+    std::stringstream buffer;
+    buffer << file.rdbuf();
+    return buffer.str();
 }

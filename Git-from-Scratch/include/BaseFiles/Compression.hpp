@@ -5,7 +5,7 @@
 #include <boost/iostreams/filter/zlib.hpp>
 #include <boost/iostreams/filtering_streambuf.hpp>
 
-std::string compressDataBySHA1(std::string& str)
+std::string hashBySHA1(std::string& str)
 {
     unsigned char hash[SHA_DIGEST_LENGTH]; // SHA_DIGEST_LENGTH is 20 for SHA-1
     SHA1(reinterpret_cast<const unsigned char*>(str.c_str()), str.size(), hash);
@@ -18,17 +18,19 @@ std::string compressDataBySHA1(std::string& str)
 }
 
 std::string compressDataBoost(const std::string& uncompressedData) {
-    std::ostringstream compressedStream;
+    std::ostringstream compressedDataStream;
+    boost::iostreams::filtering_streambuf<boost::iostreams::output> filter;
 
-    boost::iostreams::filtering_streambuf<boost::iostreams::output> out;
-    out.push(boost::iostreams::zlib_compressor());
-    out.push(compressedStream);
+    // Add zlib compressor to the filter chain
+    filter.push(boost::iostreams::zlib_compressor());
+    filter.push(compressedDataStream);
 
-    // Write the uncompressed data to the filtering stream
-    std::ostream os(&out);
-    os << uncompressedData;
+    // Write data through the filter to compress
+    std::istringstream dataStream(uncompressedData);
+    boost::iostreams::copy(dataStream, filter);
 
-    return compressedStream.str();
+    // Return the compressed data as a string
+    return compressedDataStream.str();
 }
 
 std::string decompressDataBoost(const std::string& compressedData) {

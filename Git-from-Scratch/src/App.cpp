@@ -16,7 +16,7 @@ int main(int argc, char* argv[])
 
     if (command == "--version" || command == "-v")
     {
-        std::cout << "Git version 0.0.1" << std::endl;
+        std::cout << "Git version 0.0.2" << std::endl;
         return EXIT_SUCCESS;
     }
 
@@ -58,9 +58,35 @@ int main(int argc, char* argv[])
         std::string flag = argv[2];
         std::string commitSHA_Hash = argv[3];
 
-        std::cout << "Your given flag is: " + flag << std::endl << std::endl;
-
         handleCatCommand(flag, commitSHA_Hash);
+    }
+
+    else if (command == "hash-object")
+    {
+        String flag;
+        String filePath;
+        if (argc < 3)
+        {
+            std::cerr << "Give needed amount of parameters" << std::endl;
+            return EXIT_FAILURE;
+        }
+        else if (argc < 4)
+        {
+            flag = "";
+            filePath = argv[2];
+
+            handleHashObject(flag, filePath);
+            return EXIT_SUCCESS;
+        }
+
+        flag = argv[2];
+        filePath = argv[3];
+
+        std::cout << flag + "\t" << filePath << std::endl;
+
+        handleHashObject(flag, filePath);
+
+        EXIT_SUCCESS;
     }
 
     else

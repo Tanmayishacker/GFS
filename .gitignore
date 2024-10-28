@@ -30,4 +30,8 @@
 *.exe
 *.out
 *.app
+
 /.vs/Git-from-Scratch
+
+/Git-from-Scratch/x64/
+/Git-from-Scratch/x64/Debug/

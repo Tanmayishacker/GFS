@@ -147,6 +147,7 @@
     <ClInclude Include="include\BaseFiles\Compression.hpp" />
     <ClInclude Include="include\BaseFiles\FileReader.hpp" />
     <ClInclude Include="include\commanInclude.hpp" />
+    <ClInclude Include="include\HashObject.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
