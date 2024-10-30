@@ -21,18 +21,24 @@ void handleHashObject(String& flag, String& filepath)
 {
 #pragma region Hash map variables
 
-	String hash;
-	String blob;
+	String hash = "";
+	String blob = "";
+
+	bool freeCommand = true;
+
 	fs::path fullPath = fs::current_path();
 	fullPath.append(filepath);
 
 	if (!fs::exists(fullPath))
-		std::cerr << "could not open: " << "\"" +filepath + "\"" << " for reading: No such file or directory" << std::endl;
+	{
+		freeCommand = false;
+		std::cerr << "could not open: " << "\"" + filepath + "\"" << " for reading: No such file or directory" << std::endl; 
+	}
 
 	else
 	{
 		String fileContent = readNormalFile(fullPath.string());
-		int fileLength = fileContent.size();
+		int fileLength = static_cast<int>(fileContent.size());
 
 		String header = "blob" + std::to_string(fileLength) + "\0";
 		blob = header + fileContent;
@@ -42,7 +48,7 @@ void handleHashObject(String& flag, String& filepath)
 
 #pragma endregion
 
-	if (flag == "")
+	if (freeCommand == true && flag == "")
 	{
 		std::cout << hash << std::endl;
 	}

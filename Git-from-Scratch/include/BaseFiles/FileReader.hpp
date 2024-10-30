@@ -17,7 +17,7 @@ std::string BinaryFileReader(String completeFilePath)
 void writeToFile(const String& directory, const String& filename, const String& data)
 {
     // Create the directory if it doesn't exist
-    fs::create_directory(directory);
+    fs::create_directories(directory);
 
     // Define the full path for the file
     std::string fullPath = directory + "/" + filename;
@@ -37,12 +37,15 @@ void writeToFile(const String& directory, const String& filename, const String& 
 }
 
 std::string readNormalFile(const std::string& filePath) {
-    std::ifstream file(filePath);
-    if (!file.is_open()) {
-        throw std::runtime_error("Could not open file: " + filePath);
+    std::ifstream file(filePath); // Open the file
+    if (!file.is_open()) { // Check if the file was opened successfully
+        std::cerr << "Error: Could not open file " << filePath << std::endl;
+        return ""; // Return an empty string if the file can't be opened
     }
 
-    std::stringstream buffer;
-    buffer << file.rdbuf();
-    return buffer.str();
+    // Read the contents of the file into a string
+    std::string content((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+    file.close(); // Close the file
+
+    return content; // Return the contents of the file
 }

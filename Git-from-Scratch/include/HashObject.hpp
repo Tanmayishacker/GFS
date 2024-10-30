@@ -14,7 +14,7 @@ void hashObject_W(String &blob,String &hash)
 	if (!fs::exists(completeFolderPath))
 		fs::create_directory(completeFolderPath);
 
-	String compressedData = compressDataBoost(blob);
+	String compressedData = compressDataZlib(blob);
 
 	writeToFile(completeFolderPath.string(), fileName, compressedData);
 

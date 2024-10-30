@@ -1,9 +1,9 @@
 #pragma once
+#include <zlib.h>
+#include <vector>
+#include <stdexcept>
 #include <openssl/sha.h>
 #include <commanInclude.hpp>
-#include <boost/iostreams/copy.hpp>
-#include <boost/iostreams/filter/zlib.hpp>
-#include <boost/iostreams/filtering_streambuf.hpp>
 
 std::string hashBySHA1(std::string& str)
 {
@@ -17,45 +17,74 @@ std::string hashBySHA1(std::string& str)
     return ss.str();
 }
 
-std::string compressDataBoost(const std::string& uncompressedData) {
-    std::ostringstream compressedDataStream;
-    boost::iostreams::filtering_streambuf<boost::iostreams::output> filter;
+std::string compressDataZlib(const std::string& str, int compressionLevel = Z_BEST_COMPRESSION) {
+    z_stream deflateStream{};
+    deflateStream.zalloc = Z_NULL;
+    deflateStream.zfree = Z_NULL;
+    deflateStream.opaque = Z_NULL;
 
-    // Add zlib compressor to the filter chain
-    filter.push(boost::iostreams::zlib_compressor());
-    filter.push(compressedDataStream);
+    deflateStream.avail_in = str.size();
+    deflateStream.next_in = reinterpret_cast<Bytef*>(const_cast<char*>(str.data()));
 
-    // Write data through the filter to compress
-    std::istringstream dataStream(uncompressedData);
-    boost::iostreams::copy(dataStream, filter);
+    if (deflateInit(&deflateStream, compressionLevel) != Z_OK) {
+        throw std::runtime_error("Failed to initialize zlib for compression");
+    }
 
-    // Return the compressed data as a string
-    return compressedDataStream.str();
+    std::vector<char> outBuffer;
+    const size_t bufferSize = 32768;
+    std::vector<char> tempBuffer(bufferSize);
+
+    int deflateStatus;
+    do {
+        deflateStream.avail_out = bufferSize;
+        deflateStream.next_out = reinterpret_cast<Bytef*>(tempBuffer.data());
+
+        deflateStatus = deflate(&deflateStream, Z_FINISH);
+
+        if (deflateStatus == Z_STREAM_ERROR) {
+            deflateEnd(&deflateStream);
+            throw std::runtime_error("Error during compression with deflate()");
+        }
+
+        outBuffer.insert(outBuffer.end(), tempBuffer.data(), tempBuffer.data() + bufferSize - deflateStream.avail_out);
+    } while (deflateStatus != Z_STREAM_END);
+
+    deflateEnd(&deflateStream);
+    return std::string(outBuffer.begin(), outBuffer.end());
 }
 
-std::string decompressDataBoost(const std::string& compressedData) {
-    
-    std::string decompressedData;
+std::string decompressDataZlib(const std::string& binaryStr) {
+    z_stream inflateStream{};
+    inflateStream.zalloc = Z_NULL;
+    inflateStream.zfree = Z_NULL;
+    inflateStream.opaque = Z_NULL;
 
-    try {
-        // Create a filtering streambuf for decompression
-        boost::iostreams::filtering_streambuf<boost::iostreams::input> in;
-        std::istringstream compressedStream(compressedData);
-        std::ostringstream decompressedStream;
+    inflateStream.avail_in = binaryStr.size();
+    inflateStream.next_in = reinterpret_cast<Bytef*>(const_cast<char*>(binaryStr.data()));
 
-        // Add zlib decompressor
-        in.push(boost::iostreams::zlib_decompressor());
-        in.push(compressedStream);
-
-        // Copy the decompressed data into the output stream
-        boost::iostreams::copy(in, decompressedStream);
-
-        // Retrieve decompressed data
-        decompressedData = decompressedStream.str();
-    }
-    catch (const boost::iostreams::zlib_error& e) {
-        std::cerr << "Error during decompression: " << e.what() << std::endl;
+    if (inflateInit(&inflateStream) != Z_OK) {
+        throw std::runtime_error("Failed to initialize zlib for decompression");
     }
 
-    return decompressedData;
+    std::vector<char> outBuffer;
+    const size_t bufferSize = 32768;
+    std::vector<char> tempBuffer(bufferSize);
+
+    int inflateStatus;
+    do {
+        inflateStream.avail_out = bufferSize;
+        inflateStream.next_out = reinterpret_cast<Bytef*>(tempBuffer.data());
+
+        inflateStatus = inflate(&inflateStream, Z_NO_FLUSH);
+
+        if (inflateStatus == Z_STREAM_ERROR || inflateStatus == Z_DATA_ERROR || inflateStatus == Z_MEM_ERROR) {
+            inflateEnd(&inflateStream);
+            throw std::runtime_error("Error during decompression");
+        }
+
+        outBuffer.insert(outBuffer.end(), tempBuffer.data(), tempBuffer.data() + bufferSize - inflateStream.avail_out);
+    } while (inflateStatus != Z_STREAM_END);
+
+    inflateEnd(&inflateStream);
+    return std::string(outBuffer.begin(), outBuffer.end());
 }
