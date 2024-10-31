@@ -18,7 +18,7 @@ cd Git-from-Scratch
 
 ### Dependencies
 - [Vcpkg](https://github.com/microsoft/vcpkg/releases/latest)
-- Boost-iostreams and Openssl from the vcpkg package manager.
+- Zlib and Openssl from the vcpkg package manager.
 
 ### License
 
