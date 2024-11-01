@@ -34,7 +34,6 @@ void handleHashObject(String& flag, String& filepath)
 		freeCommand = false;
 		std::cerr << "could not open: " << "\"" + filepath + "\"" << " for reading: No such file or directory" << std::endl; 
 	}
-
 	else
 	{
 		String fileContent = readNormalFile(fullPath.string());
@@ -60,5 +59,9 @@ void handleHashObject(String& flag, String& filepath)
 
 	else
 		std::cout << "Not a valid parameter!" << std::endl;
+}
 
+void handleLsTree() 
+{
+	
 }

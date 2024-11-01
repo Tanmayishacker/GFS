@@ -40,7 +40,7 @@ int main(int argc, char* argv[])
             }
             std::cout << "Initialized git directory\n";
         }
-        catch (std::filesystem::filesystem_error& e)
+        catch (fs::filesystem_error& e)
         {
             std::cerr << e.what() << '\n';
             return EXIT_FAILURE;
@@ -49,14 +49,14 @@ int main(int argc, char* argv[])
 
     else if (command == "cat-file")
     {
-        if (argc < 4) // Ensure there are at least 4 arguments
+        if (argc < 4) // Ensure there are at least 4 arguments.
         {
             std::cerr << "usage: git cat-file <type> <object>\n";
             return EXIT_FAILURE;
         }
 
-        std::string flag = argv[2];
-        std::string commitSHA_Hash = argv[3];
+        String flag = argv[2];
+        String commitSHA_Hash = argv[3];
 
         handleCatCommand(flag, commitSHA_Hash);
     }
@@ -88,7 +88,36 @@ int main(int argc, char* argv[])
 
         EXIT_SUCCESS;
     }
+    
+    else if (command == "ls-tree")
+    {
+        if (argc < 4)
+        {
+            if (argc < 3)
+            {
+                std::cout << "Not enough";
+                return EXIT_FAILURE;
+            }
 
+            std::cout << "Fatel! error: ";
+            return EXIT_FAILURE;
+        }
+
+        String sha = argv[2];
+        String flag = argv[3];
+
+        if (sha.empty())
+        {
+            sha = flag;
+            flag.clear();
+            handleLsTree();
+            return EXIT_SUCCESS;
+        }
+        else
+        {
+            return EXIT_SUCCESS;
+        }
+    }
     else
     {
         std::cerr << "Unknown command " << command << '\n';
