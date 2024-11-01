@@ -99,7 +99,7 @@ int main(int argc, char* argv[])
                 return EXIT_FAILURE;
             }
 
-            std::cout << "Fatel! error: ";
+            std::cout << "Fatal error: ";
             return EXIT_FAILURE;
         }
 
