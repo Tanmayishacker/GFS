@@ -24,7 +24,6 @@
 *.lai
 *.la
 *.a
-*.lib
 
 # Executables
 *.exe
@@ -36,3 +35,4 @@
 /Git-from-Scratch/x64/Debug/
 /out/build/x64-Debug
 /.vs
+/x64/Debug

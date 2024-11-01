@@ -6,7 +6,7 @@ set(BUILD_SHARED_LIBS OFF)
 
 #set(CMAKE_CXX_STANDARD_REQUIRED True)
 # This will set the include path of the project to includes
-set(INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include")
+set(INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Git-from-Scratch/include")
 
 add_subdirectory(third-party/zlib-1.3.1)
 
@@ -16,7 +16,7 @@ set(OPENSSL_SSL_LIBRARY "${CMAKE_CURRENT_SOURCE_DIR}/third-party/openssl/Static/
 set(OPENSSL_CRYPTO_LIBRARY "${CMAKE_CURRENT_SOURCE_DIR}/third-party/openssl/Static/libcrypto.lib")
 
 # Executable directory
-add_executable(Git-from-Scratch src/App.cpp)
+add_executable(Git-from-Scratch Git-from-Scratch/src/App.cpp)
 
 target_include_directories(Git-from-Scratch PRIVATE ${INCLUDE_DIR})
 target_include_directories(Git-from-Scratch PRIVATE ${OPENSSL_INCLUDE_DIR}) # Include the OpenSSL headers

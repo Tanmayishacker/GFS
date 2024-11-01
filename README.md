@@ -2,8 +2,8 @@
 
 ### Overview
 - Clone of git written in c++.
-- Supported Platform: Windows with vcpkg.
-- (Not Ready) Cross Platform building capabilities
+- Supported Platform: Windows with Vcpkg.
+- Cross Platform building capabilities (Currently only "Debug-64")
 
 ### Features
 - Cat-file with "-p" command
