@@ -2,8 +2,9 @@
 // All the required modules will be here such as filesystem,fstream and other required files.
 #include <HashObject.hpp>
 #include <CatCommands.hpp>
+#include <LSTree.hpp>
 
-void handleCatCommand(std::string &flag,std::string &commitSHA) 
+void handleCatCommand(String &flag,String &commitSHA) 
 {
 	if (flag == "-p")
 	{
@@ -32,7 +33,7 @@ void handleHashObject(String& flag, String& filepath)
 	if (!fs::exists(fullPath))
 	{
 		freeCommand = false;
-		std::cerr << "could not open: " << "\"" + filepath + "\"" << " for reading: No such file or directory" << std::endl; 
+		std::cerr << "could not open: " << "\"" + filepath + "\"" << " for reading: No such file or directory.\n"; 
 	}
 	else
 	{
@@ -61,7 +62,38 @@ void handleHashObject(String& flag, String& filepath)
 		std::cout << "Not a valid parameter!" << std::endl;
 }
 
-void handleLsTree() 
+void handleLSTree(String& flag , String& sha) 
 {
+#pragma region SHA Variables
+	String folder = sha.substr(0, 2);
+	String file = sha.substr(2);
+
+	fs::path folderPath = fs::current_path().string() + "/.git/objects/" + folder;
+	fs::path filePath = folderPath.string() + "/" + file;
 	
+	bool checker = true;
+
+	if (!fs::exists(folderPath))
+	{
+		std::cerr << "Not a valid object name " + sha + "\n";
+		checker = false;
+	}
+
+	if (!fs::exists(filePath) && checker == true)
+	{
+		std::cerr << "Not a valid object name " + sha ;
+		checker = false;
+	}
+#pragma endregion
+	
+	String tempDataStorage = filePath.string();
+	if (flag == "--name-only" && checker == true)
+	{
+		LSTreeNameOnly(tempDataStorage);
+	}
+
+	else if (flag.empty() && checker == true)
+	{
+		LSTreeNoNameOnly(tempDataStorage);
+	}
 }

@@ -12,11 +12,11 @@ int main(int argc, char* argv[])
         return EXIT_FAILURE;
     }
 
-    std::string command = argv[1];
+    String command = argv[1];
 
     if (command == "--version" || command == "-v")
     {
-        std::cout << "Git version 0.0.2" << std::endl;
+        std::cout << "Git version 0.0.2. \n";
         return EXIT_SUCCESS;
     }
 
@@ -59,70 +59,59 @@ int main(int argc, char* argv[])
         String commitSHA_Hash = argv[3];
 
         handleCatCommand(flag, commitSHA_Hash);
+        return EXIT_SUCCESS;
     }
 
     else if (command == "hash-object")
     {
-        String flag;
-        String filePath;
+        String flag = "";
+        String filePath = "";
         if (argc < 3)
         {
             std::cerr << "Give needed amount of parameters" << std::endl;
             return EXIT_FAILURE;
         }
-        else if (argc < 4)
-        {
-            flag = "";
-            filePath = argv[2];
 
+        flag = argv[2];
+        filePath = "";
+        if (argc < 4)
+        {
+            filePath = flag; flag.clear();
             handleHashObject(flag, filePath);
             return EXIT_SUCCESS;
         }
 
-        flag = argv[2];
         filePath = argv[3];
-
-        std::cout << flag + "\t" << filePath << std::endl;
-
         handleHashObject(flag, filePath);
-
         EXIT_SUCCESS;
     }
     
     else if (command == "ls-tree")
     {
-        if (argc < 4)
-        {
-            if (argc < 3)
-            {
-                std::cout << "Not enough";
-                return EXIT_FAILURE;
-            }
-
-            std::cout << "Fatal error: ";
+        String flag = "";
+        String sha = "";
+        if (argc < 3)
+        {   std::cout << "Not enough!!";
             return EXIT_FAILURE;
         }
-
-        String sha = argv[2];
-        String flag = argv[3];
-
-        if (sha.empty())
+        
+        flag = argv[2];
+        sha = "";
+        if (argc < 4)
         {
-            sha = flag;
-            flag.clear();
-            handleLsTree();
+            sha = flag; flag.clear();
+            handleLSTree(flag,sha);
             return EXIT_SUCCESS;
         }
-        else
-        {
-            return EXIT_SUCCESS;
-        }
+        sha = argv[3];
+        handleLSTree(flag, sha);
+        return EXIT_SUCCESS;
     }
+    
     else
     {
         std::cerr << "Unknown command " << command << '\n';
         return EXIT_FAILURE;
     }
-
     return EXIT_SUCCESS;
 }

@@ -17,16 +17,16 @@ std::string hashBySHA1(std::string& str)
     return ss.str();
 }
 
-std::string compressDataZlib(const std::string& str, int compressionLevel = Z_BEST_COMPRESSION) {
+std::string compressDataZlib(const std::string& str) {
     z_stream deflateStream{};
     deflateStream.zalloc = Z_NULL;
     deflateStream.zfree = Z_NULL;
     deflateStream.opaque = Z_NULL;
 
-    deflateStream.avail_in = str.size();
+    deflateStream.avail_in = static_cast<unsigned int>(str.size());
     deflateStream.next_in = reinterpret_cast<Bytef*>(const_cast<char*>(str.data()));
 
-    if (deflateInit(&deflateStream, compressionLevel) != Z_OK) {
+    if (deflateInit(&deflateStream, Z_BEST_COMPRESSION) != Z_OK) {
         throw std::runtime_error("Failed to initialize zlib for compression");
     }
 
@@ -59,7 +59,7 @@ std::string decompressDataZlib(const std::string& binaryStr) {
     inflateStream.zfree = Z_NULL;
     inflateStream.opaque = Z_NULL;
 
-    inflateStream.avail_in = binaryStr.size();
+    inflateStream.avail_in = static_cast<unsigned int>(binaryStr.size());
     inflateStream.next_in = reinterpret_cast<Bytef*>(const_cast<char*>(binaryStr.data()));
 
     if (inflateInit(&inflateStream) != Z_OK) {
