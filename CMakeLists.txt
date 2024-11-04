@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.29)
+cmake_minimum_required(VERSION 3.16)
 project(Git-from-Scratch)
 
 set(CMAKE_CXX_STANDARD 20)
@@ -91,4 +91,4 @@ target_include_directories(Git-from-Scratch PRIVATE ${OPENSSL_INCLUDE_DIR}) # In
 target_link_libraries(Git-from-Scratch PRIVATE zlib)
 
 # Link the OpenSSL static libraries
-target_link_options(Git-from-Scratch PRIVATE ${OPENSSL_SSL_LIBRARY} ${OPENSSL_CRYPTO_LIBRARY})
+target_link_libraries(Git-from-Scratch PRIVATE ${OPENSSL_SSL_LIBRARY} ${OPENSSL_CRYPTO_LIBRARY})
