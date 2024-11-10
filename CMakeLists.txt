@@ -88,7 +88,7 @@ add_executable(Git-from-Scratch Git-from-Scratch/src/App.cpp)
 
 target_include_directories(Git-from-Scratch PRIVATE ${INCLUDE_DIR})
 target_include_directories(Git-from-Scratch PRIVATE ${OPENSSL_INCLUDE_DIR}) # Include the OpenSSL headers
-target_link_libraries(Git-from-Scratch PRIVATE zlib)
+target_link_libraries(Git-from-Scratch PRIVATE zlibstatic)
 
 # Link the OpenSSL static libraries
 target_link_libraries(Git-from-Scratch PRIVATE ${OPENSSL_SSL_LIBRARY} ${OPENSSL_CRYPTO_LIBRARY})
