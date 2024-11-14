@@ -40,10 +40,10 @@ void handleHashObject(String& flag, String& filepath)
 		String fileContent = readNormalFile(fullPath.string());
 		int fileLength = static_cast<int>(fileContent.size());
 
-		String header = "blob" + std::to_string(fileLength) + "\0";
-		blob = header + fileContent;
+		//String header = "blob" + std::to_string(fileLength) + "\0";
+		//blob = header + fileContent;
 
-		hash = hashBySHA1(blob);
+		hash = hashBySHA1(fileContent);
 	}
 
 #pragma endregion

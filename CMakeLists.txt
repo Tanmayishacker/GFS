@@ -3,86 +3,92 @@ project(Git-from-Scratch)
 
 set(CMAKE_CXX_STANDARD 20)
 set(BUILD_SHARED_LIBS OFF)
-
-#set(CMAKE_CXX_STANDARD_REQUIRED True)
-# This will set the include path of the project to includes
-set(INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Git-from-Scratch/include")
+set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 add_subdirectory(third-party/zlib-1.3.1)
-
-# User-defined variables for architecture and tool
-if(NOT DEFINED TARGET_ARCH)
-    set(TARGET_ARCH "x64")  # Default architecture
-endif()
-
-if(NOT DEFINED BUILD_TOOL)
-    set(BUILD_TOOL "default")  # Default to whatever CMake generator is used
-endif()
-
-message(STATUS "Building for architecture: ${TARGET_ARCH}")
-message(STATUS "Using build tool: ${BUILD_TOOL}")
-
-# Define configurations based on build type and architecture
-if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    if(TARGET_ARCH STREQUAL "win32")
-        set(CONFIG "Debug-win32")
-        message(STATUS "Configuring for Debug win32")
-    elseif(TARGET_ARCH STREQUAL "x64")
-        set(CONFIG "Debug-x64")
-        message(STATUS "Configuring for Debug x64")
-    elseif(TARGET_ARCH STREQUAL "arm64" AND CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-        set(CONFIG "Debug-arm64")
-        message(STATUS "Configuring for Debug arm64 (macOS)")
-    elseif(TARGET_ARCH STREQUAL "x86_64" AND CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-        set(CONFIG "Debug-x86_64")
-        message(STATUS "Configuring for Debug x86_64 (macOS)")
-    elseif(TARGET_ARCH STREQUAL "x86" AND CMAKE_SYSTEM_NAME STREQUAL "Linux")
-        set(CONFIG "Debug-x86")
-        message(STATUS "Configuring for Debug x86 (Linux)")
-    elseif(TARGET_ARCH STREQUAL "x64" AND CMAKE_SYSTEM_NAME STREQUAL "Linux")
-        set(CONFIG "Debug-x64")
-        message(STATUS "Configuring for Debug x64 (Linux)")
-    else()
-        message(FATAL_ERROR "Unsupported architecture or build type: ${TARGET_ARCH} for ${CMAKE_BUILD_TYPE}")
-    endif()
-elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
-    if(TARGET_ARCH STREQUAL "win32")
-        set(CONFIG "Release-win32")
-        message(STATUS "Configuring for Release win32")
-    elseif(TARGET_ARCH STREQUAL "x64")
-        set(CONFIG "Release-x64")
-        message(STATUS "Configuring for Release x64")
-    elseif(TARGET_ARCH STREQUAL "arm64" AND CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-        set(CONFIG "Release-arm64")
-        message(STATUS "Configuring for Release arm64 (macOS)")
-    elseif(TARGET_ARCH STREQUAL "x86_64" AND CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-        set(CONFIG "Release-x86_64")
-        message(STATUS "Configuring for Release x86_64 (macOS)")
-    elseif(TARGET_ARCH STREQUAL "x86" AND CMAKE_SYSTEM_NAME STREQUAL "Linux")
-        set(CONFIG "Release-x86")
-        message(STATUS "Configuring for Release x86 (Linux)")
-    elseif(TARGET_ARCH STREQUAL "x64" AND CMAKE_SYSTEM_NAME STREQUAL "Linux")
-        set(CONFIG "Release-x64")
-        message(STATUS "Configuring for Release x64 (Linux)")
-    else()
-        message(FATAL_ERROR "Unsupported architecture or build type: ${TARGET_ARCH} for ${CMAKE_BUILD_TYPE}")
-    endif()
-else()
-    message(FATAL_ERROR "Unsupported build type: ${CMAKE_BUILD_TYPE}")
-endif()
-
-# Set common compiler flags based on the configuration
-if(CONFIG MATCHES "Debug")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")  # Debug flags
-elseif(CONFIG MATCHES "Release")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2")  # Release flags
-endif()
-
+# This will set the include path of the project to includes
+set(INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Git-from-Scratch/include")
 # Set paths to your OpenSSL static libraries and include directory
 set(OPENSSL_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/third-party/openssl/include")
 set(OPENSSL_SSL_LIBRARY "${CMAKE_CURRENT_SOURCE_DIR}/third-party/openssl/Static/libssl.lib")
 set(OPENSSL_CRYPTO_LIBRARY "${CMAKE_CURRENT_SOURCE_DIR}/third-party/openssl/Static/libcrypto.lib")
 
+# Set TARGET_ARCH to a default value if it is not specified
+if(NOT TARGET_ARCH)
+    if(CMAKE_SYSTEM_NAME STREQUAL "Linux" OR CMAKE_SYSTEM_NAME STREQUAL "Windows")
+        set(TARGET_ARCH "x64")  # Default to x64 for Linux and Windows
+    elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+        set(TARGET_ARCH "arm64")  # Default to arm64 for macOS (assuming Apple Silicon)
+    endif()
+    message(STATUS "TARGET_ARCH not specified. Defaulting to ${TARGET_ARCH}")
+endif()
+# Detect the generator and set configuration flags
+if(CMAKE_GENERATOR STREQUAL "Ninja")
+    message(STATUS "Configuring for Ninja")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DNINJA_BUILD")
+elseif(CMAKE_GENERATOR MATCHES "Visual Studio")
+    message(STATUS "Configuring for Visual Studio")
+    if(CMAKE_GENERATOR MATCHES "Visual Studio 16")
+        message(STATUS "Using Visual Studio 2019 specific settings")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /std:c++20")
+    elseif(CMAKE_GENERATOR MATCHES "Visual Studio 17")
+        message(STATUS "Using Visual Studio 2022 specific settings")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /std:c++20 /Zc:__cplusplus")
+    endif()
+endif()
+
+# Platform-specific and user-defined architecture flags
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    message(STATUS "Configuring for Linux with architecture ${TARGET_ARCH}")
+
+    if(TARGET_ARCH STREQUAL "x64")
+        set(ARCH_FLAGS "-m64 -march=native")
+    elseif(TARGET_ARCH STREQUAL "x86")
+        set(ARCH_FLAGS "-m32 -march=i686")
+    elseif(TARGET_ARCH STREQUAL "arm")
+        set(ARCH_FLAGS "-march=armv7-a")
+    elseif(TARGET_ARCH STREQUAL "arm64")
+        set(ARCH_FLAGS "-march=armv8-a")
+    else()
+        message(FATAL_ERROR "Unsupported architecture for Linux: ${TARGET_ARCH}")
+    endif()
+
+    set(PLATFORM_FLAGS "-Wall -Wextra -pedantic")
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    message(STATUS "Configuring for Windows with architecture ${TARGET_ARCH}")
+
+    if(TARGET_ARCH STREQUAL "x64")
+        set(ARCH_FLAGS "/arch:AVX2")
+    elseif(TARGET_ARCH STREQUAL "x86")
+        set(ARCH_FLAGS "/arch:SSE2")
+    elseif(TARGET_ARCH STREQUAL "arm")
+        set(ARCH_FLAGS "/arch:ARM")
+    elseif(TARGET_ARCH STREQUAL "arm64")
+        set(ARCH_FLAGS "/arch:ARM64")
+    else()
+        message(FATAL_ERROR "Unsupported architecture for Windows: ${TARGET_ARCH}")
+    endif()
+
+    set(PLATFORM_FLAGS "/W4")
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+    message(STATUS "Configuring for macOS with architecture ${TARGET_ARCH}")
+
+    if(TARGET_ARCH STREQUAL "x64")
+        set(ARCH_FLAGS "-arch x86_64")
+    elseif(TARGET_ARCH STREQUAL "arm64")
+        set(ARCH_FLAGS "-arch arm64 -mcpu=apple-m1")
+    else()
+        message(FATAL_ERROR "Unsupported architecture for macOS: ${TARGET_ARCH}")
+    endif()
+
+    set(PLATFORM_FLAGS "-Wall -Wextra -pedantic")
+else()
+    message(WARNING "Unknown platform, defaulting to generic flags")
+    set(PLATFORM_FLAGS "-Wall -Wextra -pedantic")
+endif()
+
+# Apply platform and architecture flags
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${PLATFORM_FLAGS} ${ARCH_FLAGS}")
 # Executable directory
 add_executable(Git-from-Scratch Git-from-Scratch/src/App.cpp)
 
