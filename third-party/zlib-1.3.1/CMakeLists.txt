@@ -5,7 +5,7 @@ project(zlib C)
 
 set(VERSION "1.3.1")
 
-option(ZLIB_BUILD_EXAMPLES "Enable Zlib Examples" ON)
+option(ZLIB_BUILD_EXAMPLES "Enable Zlib Examples" OFF)
 
 set(INSTALL_BIN_DIR "${CMAKE_INSTALL_PREFIX}/bin" CACHE PATH "Installation directory for executables")
 set(INSTALL_LIB_DIR "${CMAKE_INSTALL_PREFIX}/lib" CACHE PATH "Installation directory for libraries")
@@ -83,7 +83,6 @@ configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/zlib.pc.cmakein
 configure_file(	${CMAKE_CURRENT_SOURCE_DIR}/zconf.h.cmakein
 		${CMAKE_CURRENT_BINARY_DIR}/zconf.h @ONLY)
 include_directories(${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_SOURCE_DIR})
-
 
 #============================================================================
 # zlib
