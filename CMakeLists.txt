@@ -3,7 +3,9 @@ project(Git-from-Scratch VERSION 0.0.2)
 
 set(CMAKE_CXX_STANDARD 20)
 set(BUILD_SHARED_LIBS OFF)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MD")
+
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
 add_subdirectory(third-party/zlib-1.3.1)
 # This will set the include path of the project to includes
@@ -14,6 +16,7 @@ set(OPENSSL_SSL_LIBRARY "${CMAKE_CURRENT_SOURCE_DIR}/third-party/openssl/Static/
 set(OPENSSL_CRYPTO_LIBRARY "${CMAKE_CURRENT_SOURCE_DIR}/third-party/openssl/Static/libcrypto.lib")
 # Executable directory
 add_executable(Git-from-Scratch Git-from-Scratch/src/App.cpp)
+set_target_properties(Git-from-Scratch PROPERTIES OUTPUT_DIR ${CMAKE_BINARY_DIR}/bin)
 
 target_include_directories(Git-from-Scratch PRIVATE ${INCLUDE_DIR})
 target_include_directories(Git-from-Scratch PRIVATE ${OPENSSL_INCLUDE_DIR}) # Include the OpenSSL headers
