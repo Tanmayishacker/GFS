@@ -9,7 +9,7 @@ void catFileParameter_P(String &commitSHA)
 	String folder = commitSHA.substr(0, 2);
 
 	fs::path path = fs::current_path();
-	path.append(".git/objects/" + folder + "/" + file);
+	path.append(".git" OS_SEP "objects" OS_SEP + folder + OS_SEP + file);
 
 	String fullPath = path.string();
 

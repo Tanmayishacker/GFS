@@ -20,9 +20,9 @@ void handleCatCommand(String &flag,String &commitSHA)
 
 void handleHashObject(String& flag, String& filepath) 
 {
-	fs::path fullPath = fs::current_path().string() + "\\" + filepath;
+	fs::path fullPath = fs::current_path().string() + OS_SEP + filepath;
 	bool isFileThere = true;
-	bool isGitInitialized = fs::exists(fs::current_path().string() + "\\" + ".git");
+	bool isGitInitialized = fs::exists(fs::current_path().string() + OS_SEP ".git");
 	if (!fs::exists(fullPath))
 	{
 		isFileThere = false;
@@ -73,8 +73,8 @@ void handleLSTree(String& flag , String& sha)
 	String folder = sha.substr(0, 2);
 	String file = sha.substr(2);
 
-	fs::path folderPath = fs::current_path().string() + "/.git/objects/" + folder;
-	fs::path filePath = folderPath.string() + "/" + file;
+	fs::path folderPath = fs::current_path().string() + OS_SEP ".git" OS_SEP "objects" OS_SEP + folder;
+	fs::path filePath = folderPath.string() + OS_SEP + file;
 	
 	bool checker = true;
 

@@ -8,6 +8,12 @@
 namespace fs = std::filesystem;
 #define String std::string
 
+#ifdef _WIN32
+#define OS_SEP  "\\"
+#else
+#define OS_SEP "/"
+#endif
+
 String DefaultReturnBack()
 {
     std::string res = R"(

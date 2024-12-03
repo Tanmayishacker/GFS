@@ -9,7 +9,7 @@ void hashObject_W(String &blob,String &hash)
 	String fileName = hash.substr(2);
 
 	fs::path completeFolderPath = fs::current_path();
-	completeFolderPath.append(".git/objects/" + folder);
+	completeFolderPath.append(".git" OS_SEP "objects" OS_SEP + folder);
 
 	if (!fs::exists(completeFolderPath))
 		fs::create_directory(completeFolderPath);
