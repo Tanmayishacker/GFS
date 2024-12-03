@@ -20,46 +20,51 @@ void handleCatCommand(String &flag,String &commitSHA)
 
 void handleHashObject(String& flag, String& filepath) 
 {
+	fs::path fullPath = fs::current_path().string() + "\\" + filepath;
+	bool isFileThere = true;
+	bool isGitInitialized = fs::exists(fs::current_path().string() + "\\" + ".git");
+	if (!fs::exists(fullPath))
+	{
+		isFileThere = false;
+	}
 #pragma region Hash map variables
 
 	String hash = "";
 	String blob = "";
 
-	bool freeCommand = true;
-
-	fs::path fullPath = fs::current_path();
-	fullPath.append(filepath);
-
-	if (!fs::exists(fullPath))
-	{
-		freeCommand = false;
-		std::cerr << "could not open: " << "\"" + filepath + "\"" << " for reading: No such file or directory.\n"; 
-	}
-	else
+	if (isFileThere == true)
 	{
 		String fileContent = readNormalFile(fullPath.string());
 		int fileLength = static_cast<int>(fileContent.size());
-
-		//String header = "blob" + std::to_string(fileLength) + "\0";
-		//blob = header + fileContent;
-
 		hash = hashBySHA1(fileContent);
+	}
+	else
+	{
+		std::cerr << "could not open: " << "\"" + fullPath.string() + "\"" << " for reading: No such file or directory.\n";
 	}
 
 #pragma endregion
 
-	if (freeCommand == true && flag == "")
+	if (isFileThere == true && flag == "")
 	{
 		std::cout << hash << std::endl;
 	}
 
-	else if (flag == "-w")
+	else if (isFileThere == true && flag == "-w")
 	{
-		hashObject_W(blob,hash);
+		if (isGitInitialized== true)
+		{
+			hashObject_W(blob,hash);
+		}
+		else 
+		{
+			std::cout << "You must initilise a local repository";
+		}
 	}
-
 	else
-		std::cout << "Not a valid parameter!" << std::endl;
+	{
+		std::cerr << "Not Even a Parameter";
+	}
 }
 
 void handleLSTree(String& flag , String& sha) 

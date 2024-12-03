@@ -8,56 +8,8 @@ int main(int argc, char* argv[])
 
     if (argc < 2)
     {
-        String L = R"(
-usage: git [-v | --version] [-h | --help] [-C <path>] [-c <name>=<value>]
-[--exec-path[=<path>]] [--html-path] [--man-path] [--info-path]
-[-p | --paginate | -P | --no-pager] [--no-replace-objects] [--no-lazy-fetch]
-[--no-optional-locks] [--no-advice] [--bare] [--git-dir=<path>]
-[--work-tree=<path>] [--namespace=<name>] [--config-env=<name>=<envvar>]
-<command> [<args
-These are common Git commands used in various situations:
-
-start a working area (see also: git help tutorial)
-    clone     Clone a repository into a new directory
-    init      Create an empty Git repository or reinitialize an existing one
-
-work on the current change (see also: git help everyday)
-    add       Add file contents to the index
-    mv        Move or rename a file, a directory, or a symlink
-    restore   Restore working tree files
-    rm        Remove files from the working tree and from the index
-
-examine the history and state (see also: git help revisions)
-    bisect    Use binary search to find the commit that introduced a bug
-    diff      Show changes between commits, commit and working tree, etc
-    grep      Print lines matching a pattern
-    log       Show commit logs
-    show      Show various types of objects
-    status    Show the working tree status
-
-grow, mark and tweak your common history
-    backfill  Download missing objects in a partial clone
-    branch    List, create, or delete branches
-    commit    Record changes to the repository
-    merge     Join two or more development histories together
-    rebase    Reapply commits on top of another base tip
-    reset     Reset current HEAD to the specified state
-    switch    Switch branches
-    tag       Create, list, delete or verify a tag object signed with GPG
-
-collaborate (see also: git help workflows)
-    fetch     Download objects and refs from another repository
-    pull      Fetch from and integrate with another repository or a local branch
-    push      Update remote refs along with associated objects
-
-'git help -a' and 'git help -g' list available subcommands and some
-concept guides. See 'git help <command>' or 'git help <concept>'
-to read about a specific subcommand or concept.
-See 'git help git' for an overview of the system.
-)";
         std::cerr << "No command provided.\n";
-        std::cout << L;
-
+        std::cout << DefaultReturnBack();
         return EXIT_FAILURE;
     }
 
@@ -65,7 +17,7 @@ See 'git help git' for an overview of the system.
 
     if (command == "--version" || command == "-v")
     {
-        std::cout << "Git version 0.0.2. \n";
+        std::cout << "Git version 0.0.3 \n";
         return EXIT_SUCCESS;
     }
 
@@ -98,9 +50,20 @@ See 'git help git' for an overview of the system.
 
     else if (command == "cat-file")
     {
-        if (argc < 4) // Ensure there are at least 4 arguments.
+        if (!fs::exists(".git"))
         {
-            std::cerr << "usage: git cat-file <type> <object>\n";
+            std::cout << "fatal: not a git repository (or any of the parent directories): .git";
+            return EXIT_FAILURE;
+        }
+        if (argc < 3) // Ensure there are at least 4 arguments.
+        {
+            std::cerr << CatCommandAvailable();
+            return EXIT_FAILURE;
+        }
+        if (argc < 4)
+        {
+            std::cout << "fatal: only two arguments allowed in <type> <object> mode, not 1\n" << std::endl;
+            std::cerr << CatCommandAvailable();
             return EXIT_FAILURE;
         }
 
@@ -117,7 +80,6 @@ See 'git help git' for an overview of the system.
         String filePath = "";
         if (argc < 3)
         {
-            std::cerr << "Give needed amount of parameters" << std::endl;
             return EXIT_FAILURE;
         }
 
@@ -143,72 +105,27 @@ See 'git help git' for an overview of the system.
         {   std::cout << "Not enough!!";
             return EXIT_FAILURE;
         }
-        
-        flag = argv[2];
-        sha = "";
-        if (argc < 4)
+        else if (argc == 3)
         {
+            flag = argv[2];
+            sha = "";
             sha = flag; flag.clear();
-            handleLSTree(flag,sha);
+            handleLSTree(flag, sha);
             return EXIT_SUCCESS;
         }
-        sha = argv[3];
-        handleLSTree(flag, sha);
-        return EXIT_SUCCESS;
+        else
+        {
+            flag = argv[2];
+            sha = argv[3];
+            handleLSTree(flag, sha);
+            return EXIT_SUCCESS;
+        }
     }
     
     else
     {
-        String L = R"(
-            usage: git [-v | --version] [-h | --help] [-C <path>] [-c <name>=<value>]
-            [--exec-path[=<path>]] [--html-path] [--man-path] [--info-path]
-            [-p | --paginate | -P | --no-pager] [--no-replace-objects] [--no-lazy-fetch]
-            [--no-optional-locks] [--no-advice] [--bare] [--git-dir=<path>]
-            [--work-tree=<path>] [--namespace=<name>] [--config-env=<name>=<envvar>]
-            <command> [<args>]
-
-            These are common Git commands used in various situations:
-            
-            start a working area (see also: git help tutorial)
-                clone     Clone a repository into a new directory
-                init      Create an empty Git repository or reinitialize an existing one
-            
-            work on the current change (see also: git help everyday)
-                add       Add file contents to the index
-                mv        Move or rename a file, a directory, or a symlink
-                restore   Restore working tree files
-                rm        Remove files from the working tree and from the index
-            
-            examine the history and state (see also: git help revisions)
-                bisect    Use binary search to find the commit that introduced a bug
-                diff      Show changes between commits, commit and working tree, etc
-                grep      Print lines matching a pattern
-                log       Show commit logs
-                show      Show various types of objects
-                status    Show the working tree status
-            
-            grow, mark and tweak your common history
-                backfill  Download missing objects in a partial clone
-                branch    List, create, or delete branches
-                commit    Record changes to the repository
-                merge     Join two or more development histories together
-                rebase    Reapply commits on top of another base tip
-                reset     Reset current HEAD to the specified state
-                switch    Switch branches
-                tag       Create, list, delete or verify a tag object signed with GPG
-            
-            collaborate (see also: git help workflows)
-                fetch     Download objects and refs from another repository
-                pull      Fetch from and integrate with another repository or a local branch
-                push      Update remote refs along with associated objects
-            
-            'git help -a' and 'git help -g' list available subcommands and some
-            concept guides. See 'git help <command>' or 'git help <concept>'
-            to read about a specific subcommand or concept.
-            See 'git help git' for an overview of the system.
-)";
         std::cerr << "Unknown command " << command << '\n';
-        std::cout << L;
+        std::cout << DefaultReturnBack();
         return EXIT_FAILURE;
     }
     return EXIT_SUCCESS;
