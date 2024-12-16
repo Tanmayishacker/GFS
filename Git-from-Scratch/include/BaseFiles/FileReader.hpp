@@ -1,5 +1,5 @@
 #pragma once
-#include <commanInclude.hpp>
+#include "commanInclude.hpp"
 
 std::string BinaryFileReader(String &completeFilePath)
 {
@@ -20,7 +20,7 @@ void writeToFile(const String& directory, const String& filename, const String& 
     fs::create_directories(directory);
 
     // Define the full path for the file
-    std::string fullPath = directory + "/" + filename;
+    std::string fullPath = directory + "\\" + filename;
 
     // Open the file in write mode
     std::ofstream outfile(fullPath);
