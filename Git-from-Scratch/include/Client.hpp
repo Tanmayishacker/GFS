@@ -8,7 +8,7 @@ void handleCatCommand(String &flag,String &commitSHA)
 {
 	if (flag == "-p")
 	{
-		std::cout << "Your given flag is: " + flag << std::endl << std::endl;
+		std::cout << "Your given flag is: " + flag << "\n \n";
 		catFileParameter_P(commitSHA);
 	}
 	
@@ -20,7 +20,7 @@ void handleCatCommand(String &flag,String &commitSHA)
 
 void handleHashObject(String& flag, String& filepath) 
 {
-	fs::path fullPath = fs::current_path().string() + "\\" + filepath;
+	fs::path fullPath = fs::current_path().string() + "/" + filepath;
 	bool isFileThere = true;
 	bool isGitInitialized = fs::exists(fs::current_path().string() + "\\" + ".git");
 	if (!fs::exists(fullPath))
