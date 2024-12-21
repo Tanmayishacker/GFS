@@ -4,6 +4,7 @@
 #include <sstream>
 #include <iostream>
 #include <filesystem>
+#include <algorithm>
 
 namespace fs = std::filesystem;
 #define String std::string
@@ -102,4 +103,16 @@ Emit object (blob or tree) with conversion or filter (stand-alone, or with batch
     --textconv            run textconv on object's content
     --filters             run filters on object's content
     --[no-]path blob|tree use a <path> for (--textconv | --filters); Not with 'batch')";
+}
+
+std::string get_file_path(const std::string& path) {
+    std::string file_path = path;
+
+#ifdef _WIN32
+    // Windows: Convert forward slashes to backslashes for compatibility
+    std::replace(file_path.begin(), file_path.end(), '/', '\\');
+#endif
+
+    // Return the path with the correct slashes based on the operating system
+    return file_path;
 }

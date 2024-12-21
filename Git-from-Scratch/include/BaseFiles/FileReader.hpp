@@ -20,8 +20,8 @@ void writeToFile(const String& directory, const String& filename, const String& 
     fs::create_directories(directory);
 
     // Define the full path for the file
-    std::string fullPath = directory + "\\" + filename;
-
+    std::string fPath = directory + '/' + filename;
+    String fullPath = get_file_path(fPath);
     // Open the file in write mode
     std::ofstream outfile(fullPath);
 

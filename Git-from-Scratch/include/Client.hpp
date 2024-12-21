@@ -20,10 +20,12 @@ void handleCatCommand(String &flag,String &commitSHA)
 
 void handleHashObject(String& flag, String& filepath) 
 {
-	fs::path fullPath = fs::current_path().string() + "/" + filepath;
+	fs::path fullPath = fs::current_path().string() + '/' + filepath;
+	String fullFolderPath = fullPath.string();
+
 	bool isFileThere = true;
-	bool isGitInitialized = fs::exists(fs::current_path().string() + "\\" + ".git");
-	if (!fs::exists(fullPath))
+	bool isGitInitialized = fs::exists(fs::current_path().string() + '/' + ".git");
+	if (!fs::exists(fullFolderPath))
 	{
 		isFileThere = false;
 	}
@@ -34,13 +36,13 @@ void handleHashObject(String& flag, String& filepath)
 
 	if (isFileThere == true)
 	{
-		String fileContent = readNormalFile(fullPath.string());
+		String fileContent = readNormalFile(fullFolderPath);
 		int fileLength = static_cast<int>(fileContent.size());
 		hash = hashBySHA1(fileContent);
 	}
 	else
 	{
-		std::cerr << "could not open: " << "\"" + fullPath.string() + "\"" << " for reading: No such file or directory.\n";
+		std::cerr << "could not open: " << "\"" + fullFolderPath + "\"" << " for reading: No such file or directory.\n";
 	}
 
 #pragma endregion
@@ -73,18 +75,21 @@ void handleLSTree(String& flag , String& sha)
 	String folder = sha.substr(0, 2);
 	String file = sha.substr(2);
 
-	fs::path folderPath = fs::current_path().string() + "\\" + ".git" +"\\" +"objects" +"\\" + folder;
-	fs::path filePath = folderPath.string() + "\\" + file;
-	
+	fs::path folderPath = fs::current_path().string() + '/' + ".git" +'/' +"objects" +'/' + folder;
+	String fullFolderPath = get_file_path(folderPath.string());
+
+	fs::path filePath = folderPath.string() + '/' + file;
+	String fullFilePath = get_file_path(filePath.string());
+
 	bool checker = true;
 
-	if (!fs::exists(folderPath))
+	if (!fs::exists(fullFolderPath))
 	{
 		std::cerr << "Not a valid object name " + sha + "\n";
 		checker = false;
 	}
 
-	if (!fs::exists(filePath) && checker == true)
+	if (!fs::exists(fullFilePath) && checker == true)
 	{
 		std::cerr << "Not a valid object name " + sha ;
 		checker = false;
