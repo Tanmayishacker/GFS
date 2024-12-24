@@ -2,8 +2,7 @@
 
 ### Overview
 - Clone of git written in c++.
-- Supported Platform: Windows with Vcpkg.
-- Cross Platform building capabilities (Currently only "Debug-64")
+- Cross Platform building capabilities 
 
 ### Features
 - Cat-file with "-p" command
@@ -17,8 +16,9 @@ cd Git-from-Scratch
 ```
 
 ### Dependencies
-- [Vcpkg](https://github.com/microsoft/vcpkg/releases/latest)
-- Zlib and Openssl from the vcpkg package manager.
+- Visual Studio for windows
+- [Zlib](https://github.com/madler/zlib) from Madler
+- [Cryptopp](https://github.com/weidai11/cryptopp) from weidai11
 
 ### License
 

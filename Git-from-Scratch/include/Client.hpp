@@ -25,10 +25,10 @@ void handleHashObject(String& flag, String& filepath)
 
 	bool isFileThere = true;
 	bool isGitInitialized = fs::exists(fs::current_path().string() + '/' + ".git");
+
 	if (!fs::exists(fullFolderPath))
-	{
 		isFileThere = false;
-	}
+
 #pragma region Hash map variables
 
 	String hash = "";
@@ -37,13 +37,10 @@ void handleHashObject(String& flag, String& filepath)
 	if (isFileThere == true)
 	{
 		String fileContent = readNormalFile(fullFolderPath);
-		int fileLength = static_cast<int>(fileContent.size());
 		hash = hashBySHA1(fileContent);
 	}
 	else
-	{
 		std::cerr << "could not open: " << "\"" + fullFolderPath + "\"" << " for reading: No such file or directory.\n";
-	}
 
 #pragma endregion
 
@@ -63,6 +60,7 @@ void handleHashObject(String& flag, String& filepath)
 			std::cout << "You must initilise a local repository";
 		}
 	}
+	
 	else
 	{
 		std::cerr << "Not Even a Parameter";

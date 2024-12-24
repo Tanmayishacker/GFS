@@ -4,7 +4,6 @@
 #include <sstream>
 #include <iostream>
 #include <filesystem>
-#include <algorithm>
 
 namespace fs = std::filesystem;
 #define String std::string
@@ -110,7 +109,12 @@ std::string get_file_path(const std::string& path) {
 
 #ifdef _WIN32
     // Windows: Convert forward slashes to backslashes for compatibility
-    std::replace(file_path.begin(), file_path.end(), '/', '\\');
+    // Loop to find and replace '/' with '\\'
+    size_t pos = 0;
+    while ((pos = file_path.find('/', pos)) != std::string::npos) {
+        file_path.replace(pos, 1, "\\");  // Replace 1 character with '\\'
+        pos += 2;  // Move past the inserted '\\'
+    }
 #endif
 
     // Return the path with the correct slashes based on the operating system

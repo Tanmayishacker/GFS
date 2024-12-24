@@ -37,13 +37,17 @@ void writeToFile(const String& directory, const String& filename, const String& 
 }
 
 std::string readNormalFile(const String& filePath) {
-    std::ifstream file(filePath); // Open the file
-    if (!file.is_open()) { // Check if the file was opened successfully
-        std::cerr << "Error: Could not open file " << filePath << std::endl;
-        return ""; // Return an empty string if the file can't be opened
+    std::ifstream file(filePath, std::ios::in | std::ios::binary);
+
+    if (!file.is_open()) {
+        throw std::runtime_error("Failed to open file: " + filePath);
     }
-    // Read the contents of the file into a string
-    String content((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
-    file.close(); // Close the file
-    return content; // Return the contents of the file
+
+    std::ostringstream content;
+    content << file.rdbuf(); // Read the entire buffer into the stream
+
+    if (file.fail()) {
+        throw std::runtime_error("Error occurred while reading file: " + filePath);
+    }
+    return content.str();
 }
