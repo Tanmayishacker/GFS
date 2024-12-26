@@ -39,3 +39,17 @@
 /out
 /third-party/cryptopp
 /third-party/zlib/zlib-1.3.1
+
+CMakeLists.txt.user
+CMakeCache.txt
+CMakeFiles
+CMakeScripts
+Testing
+Makefile
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+CTestTestfile.cmake
+_deps
+CMakeUserPresets.json
+/build
