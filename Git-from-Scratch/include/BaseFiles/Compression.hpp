@@ -1,10 +1,10 @@
 #pragma once
-#include <hex.h>
-#include <sha.h>
+#include <cryptopp\hex.h>
+#include <cryptopp\sha.h>
 #include <Filter.h>
 #include <stdexcept>
 #include "commanInclude.hpp"
-#include <zlib-1.3.1/zlib.h>
+#include <zlib.h>
 
 using namespace CryptoPP;
 

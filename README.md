@@ -15,6 +15,9 @@ git clone https://github.com/Tanmayishacker/GFS.git
 cd Git-from-Scratch
 ```
 
+- Windows run the Windows.bat file
+- Linux and macos run the Unix.sh file
+
 ### Dependencies
 - Visual Studio for windows
 - [Zlib](https://github.com/madler/zlib) from Madler

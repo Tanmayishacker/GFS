@@ -5,55 +5,43 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
-#                           DOWNLOAD ALL SUBMODULES
-find_package(GIT QUIET)
-if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
-# Update submodules as needed
-    option(GIT_SUBMODULE "Check submodules during build"  ON)
-    if(GIT_SUBMODULES)
-        message(STATUS "Submodule update")
-        execute_process( COMMAND ${GIT_EXECUTABLE} submodule update --init --recuresive 
-            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-            RESULT_VARIABLE GIT_SUBMOD_RESULT
-        )
-        if(NOT GIT_SUBMOD_RESULT EQUAL "0")
-            message(FATEL_ERROR "git submodule update --init failed with ${GIT_SUBMOD_RESULT}, Please check")
-        endif()
-    endif()
-endif()
+add_subdirectory(external/zlib_L)
 
-# add_subdirectory(external/zlib)
+# Create a list to store the found libraries
+set(FOUND_LIBRARIES)
+set(INCLUDE_DIR "${CMAKE_SOURCE_DIR}/Git-from-Scratch/include/")
+set(CRYPTOPP_INCLUDE "${CMAKE_SOURCE_DIR}/external/")
+set(CRYPTOO_VSLIB "${CRYPTOPP_INCLUDE}/cryptopp/x64/Output/Release/cryptlib.lib")
 
-if(CMAKE_SYSTEM_NAME MATCHES "Windows")
-    #execute_process(
-    #    COMMAND msbuild.exe "${THIRD_PARTY_DIR}/cryptopp"
-    #    /p:Configuration=Release
-    #    /p:Platform=x64
-    #    /t:Rebuild
-    #    /p:OutDir="${PROJECT_BINARY_DIR}/output"
-    #    /p:ProjectToBuild=cryptlib
-    #    /v:m
-    #    WORKING_DIRECTORY "${THIRD_PARTY_DIR}/cryptopp"
-    #)
+# Get a list of all files in the library directory
+file(GLOB LIBRARY_FILES "${CRYPTOPP_INCLUDE}/*.so" "${CRYPTOPP_INCLUDE}/*.a" "${CRYPTOPP_INCLUDE}/*.dylib")
+# Iterate through the list of files
+foreach(LIBRARY_FILE ${LIBRARY_FILES})
+  # Extract the library name without the extension
+  string(REGEX REPLACE ".so|.a|.dylib$" "" LIBRARY_NAME "${CRYPTOPP_INCLUDE}")
 
-elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
-    execute_process(
-        COMMAND make -j$(nproc) NO_TESTS=1
-    )
-    set(CRYPTOPP_LIBRARY "${THIRD_PARTY_DIR}/cryptopp/")
+  # Find the library using its name
+  find_library(LIBRARY_PATH ${LIBRARY_NAME} PATHS ${LIBRARY_DIR})
 
-elseif(CMAKE_SYSTEM_NAME MATCHES "Darwin")
-    execute_process(
-        COMMAND make -j$(nproc) NO_TESTS=1
-    )
-    set(CRYPTOPP_LIBRARY "${THIRD_PARTY_DIR}/cryptopp/")
+  # If the library is found, add it to the list
+  if(LIBRARY_PATH)
+    list(APPEND FOUND_LIBRARIES ${LIBRARY_PATH})
+  endif()
+endforeach()
 
-else()
-	message("Unknown OS TYPE")
-endif()
+include_directories(GFS PRIVATE ${INCLUDE_DIR})
+include_directories(GFS PRIVATE ${CRYPTOPP_INCLUDE})
 
 # Executable directory
 add_executable(GFS Git-from-Scratch/src/App.cpp)
 set_target_properties(GFS PROPERTIES OUTPUT_DIR ${CMAKE_BINARY_DIR}/bin)
 
-target_include_directories(GFS PRIVATE ${INCLUDE_DIR})
+if(CMAKE_SYSTEM_NAME MATCHES "Windows")
+    target_link_libraries(GFS PRIVATE "${CRYPTOO_VSLIB}")
+elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
+    target_link_libraries(your_target ${FOUND_LIBRARIES})
+elseif(CMAKE_SYSTEM_NAME MATCHES "Darwin")
+    target_link_libraries(your_target ${FOUND_LIBRARIES})
+endif()
+
+target_link_libraries(GFS PRIVATE zlib)

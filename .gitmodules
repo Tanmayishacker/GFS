@@ -1,3 +1,6 @@
-[submodule "external/zlib"] 
-    path = external/zlib 
-    url = https://github.com/madler/zlib.git
+[submodule "external/cryptopp"]
+	path = external/cryptopp
+	url = https://github.com/weidai11/cryptopp.git
+[submodule "external/zlib_L"]
+	path = external/zlib_L
+	url = https://github.com/madler/zlib.git

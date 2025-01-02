@@ -1,0 +1,11 @@
+Windows..................
+
+- Run the bat file through the command prompt
+- After the submodules have been installed compile the cryptopp library, build the cryplib using the x64 architecture and in release format.
+- After that run the cmake
+
+Linux and Macos.....................
+
+- Run the .sh file through the terminal
+- After the submodules have been downloaded compile the cryptopp library, build the library using the "GNUmakefile" run the command "make libcryptopp.a"
+- After that run the cmake
