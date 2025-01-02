@@ -1,38 +1,24 @@
 #pragma once
-#include <cryptopp\hex.h>
-#include <cryptopp\sha.h>
-#include <Filter.h>
+#include <openssl/sha.h>
 #include <stdexcept>
 #include "commanInclude.hpp"
 #include <zlib.h>
 
-using namespace CryptoPP;
+std::string hashBySHA1(const std::string& input) {
+    // Create a buffer to hold the hash
+    unsigned char hash[SHA_DIGEST_LENGTH];
 
-std::string hashBySHA1(std::string& str)
-{
-    try {
-        // Create SHA1 hash object
-        SHA1 hash;
+    // Perform the SHA1 hash
+    SHA1(reinterpret_cast<const unsigned char*>(input.c_str()), input.length(), hash);
 
-        // Create a string to hold the hash output
-        std::string hashOutput;
-
-        // Hash the input and store the result in the hashOutput string
-        StringSource(str, true,
-            new HashFilter(hash,
-                new StringSink(hashOutput)));
-
-        // Convert the binary hash to hex format for readability
-        std::string hexHash;
-        StringSource(hashOutput, true,
-            new HexEncoder(new StringSink(hexHash)));
-
-        return hexHash;
+    // Convert the hash to a hexadecimal string
+    std::stringstream hexStream;
+    for (int i = 0; i < SHA_DIGEST_LENGTH; ++i) {
+        hexStream << std::setw(2) << std::setfill('0') << std::hex << (int)hash[i];
     }
-    catch (const Exception& e) {
-        std::cerr << "Crypto++ Exception: " << e.what() << std::endl;
-        return "";
-    }
+
+    // Return the hash as a string
+    return hexStream.str();
 }
 
 std::string compressDataZlib(const std::string& str) {

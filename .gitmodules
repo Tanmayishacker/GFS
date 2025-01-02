@@ -1,7 +1,3 @@
-[submodule "external/cryptopp"]
-	path = external/cryptopp
-	url = https://github.com/weidai11/cryptopp.git
-	branch = master
 [submodule "external/zlib_L"]
 	path = external/zlib_L
 	url = https://github.com/madler/zlib.git

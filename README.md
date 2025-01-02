@@ -21,7 +21,7 @@ cd Git-from-Scratch
 ### Dependencies
 - Visual Studio for windows
 - [Zlib](https://github.com/madler/zlib) from Madler
-- [Cryptopp](https://github.com/weidai11/cryptopp) from weidai11
+- Openssl
 
 ### License
 

@@ -13,4 +13,6 @@ git submodule update --init --recursive
 # Optionally, notify the user when done
 echo "Submodules have been updated successfully!"
 
+apt install libssl-dev
+
 cmake -S .
