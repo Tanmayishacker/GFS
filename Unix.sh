@@ -15,4 +15,4 @@ echo "Submodules have been updated successfully!"
 
 apt install libssl-dev
 
-cmake -S .
+cmake -S . -B ./build

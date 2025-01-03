@@ -1,6 +1,7 @@
 #pragma once
 #include <openssl/sha.h>
 #include <stdexcept>
+#include <vector>
 #include "commanInclude.hpp"
 #include <zlib.h>
 
